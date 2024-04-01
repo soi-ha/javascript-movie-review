@@ -1,4 +1,6 @@
 import './MovieItem.css';
+import ModalController from '../../controller/ModalController';
+import MovieDetailService from '../../services/MovieDetailService';
 import StarFilled from '../../statics/images/star_filled.png';
 
 const createTitle = (title: string) => {
@@ -15,7 +17,7 @@ const createScore = (vote_average: number) => {
   const $scoreImg = document.createElement('img');
   $scoreImg.src = StarFilled;
   $scoreImg.alt = '별점';
-  $score.textContent = vote_average.toString();
+  $score.textContent = vote_average.toFixed(1);
   $score.appendChild($scoreImg);
 
   return $score;
@@ -26,7 +28,7 @@ const createThumbnail = (title: string, poster_path: string) => {
   $thumbnail.classList.add('item-thumbnail');
   $thumbnail.src = `https://image.tmdb.org/t/p/w220_and_h330_face${poster_path}`;
   $thumbnail.loading = 'lazy';
-  $thumbnail.alt = title;
+  $thumbnail.alt = `${title} 포스터`;
 
   return $thumbnail;
 };
@@ -50,24 +52,26 @@ const createCard = ({
   return $card;
 };
 
-const createMovieItem = (movie: Movie) => {
+const MovieItem = (movie: Movie) => {
   const $li = document.createElement('li');
-  const $anchor = document.createElement('a');
-  $anchor.href = '#';
   const $card = createCard(movie);
 
-  $anchor.appendChild($card);
-  $li.appendChild($anchor);
+  const render = () => {
+    $li.id = movie.id.toString();
+    $li.appendChild($card);
 
-  return $li;
-};
-
-function MovieItem(movie: Movie) {
-  return {
-    render: () => {
-      const $movieItem = createMovieItem(movie);
-      return $movieItem;
-    },
+    return $li;
   };
-}
+
+  $card.addEventListener('click', () => {
+    MovieDetailService.fetchDetailMovie(movie.id).then((res) => {
+      ModalController.openModal(res);
+      ModalController.closeModal();
+    });
+  });
+
+  return {
+    render,
+  };
+};
 export default MovieItem;

@@ -22,6 +22,10 @@
 
 ### 컴포넌트
 
+- displayErrorMessage
 - Header
+- LoadMoreButton
+- Main
 - MovieItem
-- MoreBtn
+- MovieList
+- SearchInput

@@ -1,3 +1,6 @@
+li {
+  width: fit-content;
+}
 .item-card {
   display: flex;
   flex-direction: column;
@@ -24,8 +27,15 @@
 }
 
 .item-score {
+  display: flex;
+  align-items: center;
   margin-top: 16px;
   font-size: 1.2rem;
+}
+
+.item-score img {
+  margin-bottom: 3px;
+  margin-left: 5px;
 }
 
 .item-score::after {
@@ -36,4 +46,11 @@
 .item-score.skeleton::after {
   content: 'loading';
   font-size: 0;
+}
+
+@media (max-width: 668px) {
+  .item-thumbnail {
+    width: 150px;
+    height: 230px;
+  }
 }

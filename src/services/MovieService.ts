@@ -1,58 +1,72 @@
-import {
-  REQUEST_URL,
-  COMMON_OPTIONS,
-  COMMON_PARAMS,
-} from '../constants/requests';
+import { REQUEST_URL, COMMON_OPTIONS } from '../constants/requests';
 import fetchData from '../utils/fetchData';
+import { generateUrl, Params } from '../utils/generateUrl';
 
-export interface Params {
-  [key: string]: string | number | boolean;
-}
-
-interface MovieRequestResult {
+interface Movie {
   id: number;
   title: string;
   vote_average: number;
   poster_path: string;
 }
 
-const MovieService = {
-  async fetchMovies(url: string) {
-    const data = await fetchData({
-      url,
-      options: COMMON_OPTIONS,
-    });
+export interface MovieData {
+  movies: Movie[];
+  page: number;
+  isLastPage: boolean;
+  isEmptyResults: boolean;
+}
 
-    const { page, total_pages, results, total_results } = data;
-    const isLastPage = page === total_pages;
-    const isEmptyResults = total_results === 0;
-    const movies = results.map(
-      ({ id, title, vote_average, poster_path }: MovieRequestResult) => ({
-        id,
-        title,
-        vote_average,
-        poster_path,
-      }),
-    );
+interface MovieResults {
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: [];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
 
-    return { movies, page, isLastPage, isEmptyResults };
-  },
+const fetchMovies = async (url: string): Promise<MovieData> => {
+  const data = await fetchData({
+    url,
+    options: COMMON_OPTIONS,
+  });
 
+  const { page, total_pages, results, total_results } = data;
+  const isLastPage = page === total_pages;
+  const isEmptyResults: boolean = total_results === 0;
+  const movies: Movie[] = results.map(
+    (
+      movie: Pick<
+        MovieResults,
+        'id' | 'title' | 'vote_average' | 'poster_path'
+      >,
+    ) => ({
+      id: movie.id,
+      title: movie.title,
+      vote_average: movie.vote_average,
+      poster_path: movie.poster_path,
+    }),
+  );
+
+  return { movies, page, isLastPage, isEmptyResults };
+};
+
+export const MovieService = {
   async fetchSearchMovies(params: Params) {
-    const url = `${REQUEST_URL.searchMovies}${new URLSearchParams({
-      ...COMMON_PARAMS,
-      ...params,
-    })}`;
-    return this.fetchMovies(url);
+    const url = generateUrl(REQUEST_URL.searchMovies, params);
+    return fetchMovies(url);
   },
 
   async fetchPopularMovies(params: Params) {
-    const url = `${REQUEST_URL.popularMovies}${new URLSearchParams({
-      ...COMMON_PARAMS,
-      ...params,
-    })}`;
-    return this.fetchMovies(url);
+    const url = generateUrl(REQUEST_URL.popularMovies, params);
+    return fetchMovies(url);
   },
 };
-
-export default MovieService;
