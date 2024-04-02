@@ -1,3 +1,4 @@
+import { STAR_RATING_TEXT_LIST, POSTER_BASE_URL } from '../../constants/rule';
 import {
   LocalStorageService,
   StarRating,
@@ -6,7 +7,7 @@ import CloseBtn from '../../statics/images/close_button.png';
 import StarEmpty from '../../statics/images/star_empty.png';
 import StarFilled from '../../statics/images/star_filled.png';
 import './Modal.css';
-import STAR_RATING_TEXT_LIST from '../../constants/messages';
+import NoPosterImage from '../../statics/images/no_poster_image.png';
 
 const createHeader = (title: string) => {
   const $header = document.createElement('div');
@@ -89,13 +90,11 @@ const createUserRating = (movieId: number) => {
     $starBtn.id = `star-btn${idx + 1}`;
 
     const $starImg = document.createElement('img');
-    if (rating && rating.ratingNumber / 2 >= idx + 1) {
-      $starImg.src = StarFilled;
-    } else {
-      $starImg.src = StarEmpty;
-    }
-
+    const isFilled = rating && rating.ratingNumber / 2 >= idx + 1;
+    const src = isFilled ? StarFilled : StarEmpty;
+    $starImg.src = src;
     $starImg.alt = starText;
+
     $starBtn.appendChild($starImg);
     $starBox.appendChild($starBtn);
   });
@@ -144,7 +143,10 @@ const createDetail = (movie: Movie) => {
 
   const $poster = document.createElement('img');
   $poster.classList.add('modal-body__poster');
-  $poster.src = `https://image.tmdb.org/t/p/w220_and_h330_face${movie.poster_path}`;
+  $poster.src = `${POSTER_BASE_URL}${movie.poster_path}`;
+  $poster.onerror = () => {
+    $poster.src = NoPosterImage;
+  };
   $poster.alt = `${movie.title} 포스터`;
 
   const $content = createContent(movie);

@@ -1,6 +1,8 @@
 import './MovieItem.css';
+import { POSTER_BASE_URL } from '../../constants/rule';
 import ModalController from '../../controller/ModalController';
 import MovieDetailService from '../../services/MovieDetailService';
+import NoPosterImage from '../../statics/images/no_poster_image.png';
 import StarFilled from '../../statics/images/star_filled.png';
 
 const createTitle = (title: string) => {
@@ -26,7 +28,10 @@ const createScore = (vote_average: number) => {
 const createThumbnail = (title: string, poster_path: string) => {
   const $thumbnail = document.createElement('img');
   $thumbnail.classList.add('item-thumbnail');
-  $thumbnail.src = `https://image.tmdb.org/t/p/w220_and_h330_face${poster_path}`;
+  $thumbnail.src = `${POSTER_BASE_URL}${poster_path}`;
+  $thumbnail.onerror = () => {
+    $thumbnail.src = NoPosterImage;
+  };
   $thumbnail.loading = 'lazy';
   $thumbnail.alt = `${title} 포스터`;
 
@@ -38,7 +43,7 @@ const createCard = ({
   poster_path,
   vote_average,
 }: Pick<Movie, 'title' | 'poster_path' | 'vote_average'>) => {
-  const $card = document.createElement('div');
+  const $card = document.createElement('button');
   $card.classList.add('item-card');
 
   const $thumbnail = createThumbnail(title, poster_path);

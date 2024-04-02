@@ -1,3 +1,5 @@
+import { MOBILE_BREAKPOINT } from '../../constants/rule';
+
 const createSearchBox = () => {
   const $searchBox = document.createElement('div');
   $searchBox.classList.add('search-box');
@@ -25,14 +27,6 @@ const SearchInput = () => {
 
     return $searchBox;
   };
-
-  if (window.innerWidth <= 390) {
-    $searchInput.classList.add('visibility-hidden');
-    $searchBtn.addEventListener('click', () => {
-      $searchBox.classList.toggle('click-input-box');
-      $searchInput.classList.toggle('visibility-hidden');
-    });
-  }
 
   $searchInput.addEventListener('keydown', (e) => {
     const { target } = e;
@@ -65,8 +59,8 @@ const SearchInput = () => {
     }
   });
 
-  if (window.innerWidth > 390) {
-    $searchBtn.addEventListener('click', () => {
+  $searchBtn.addEventListener('click', () => {
+    if (window.innerWidth > MOBILE_BREAKPOINT) {
       const { value } = $searchInput as HTMLInputElement;
       $searchInput.dispatchEvent(
         new CustomEvent('search', {
@@ -76,8 +70,8 @@ const SearchInput = () => {
           },
         }),
       );
-    });
-  }
+    }
+  });
 
   return {
     render,

@@ -1,5 +1,4 @@
 .modal {
-  /* display: none; */
   position: absolute;
   top: 0;
   left: 0;
@@ -46,6 +45,7 @@
 
 .modal-body__poster {
   margin-right: 32px;
+  border-radius: 8px;
 }
 
 .modal-body__content {
